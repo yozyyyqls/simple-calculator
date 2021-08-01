@@ -1,5 +1,6 @@
 # 标识符类型
 INTEGER, MUL, DIV, EOF = 'INTEGER', 'MUL', 'DIV', 'EOF'
+PLUS, MINUS = 'PLUS', 'MINUS'
 
 
 
@@ -55,6 +56,14 @@ class Lexer(object):
             if self.current_char == '/':
                 self.advance()
                 return Token(DIV, '/')
+            
+            if self.current_char == '+':
+                self.advance()
+                return Token(PLUS, '+')
+
+            if self.current_char == '-':
+                self.advance()
+                return Token(MINUS, '-')
 
             self.error()
 
@@ -103,7 +112,23 @@ class Interpreter(object):
         else:
             self.error()
 
+
     def expr(self):
+        result = self.term()
+
+        while self.current_token.type in (PLUS, MINUS):
+            token = self.current_token
+            if token.type == PLUS:
+                self.eat(PLUS)
+                result = result + self.term()
+            elif token.type == MINUS:
+                self.eat(MINUS)
+                result = result - self.term()
+        
+        return result
+
+
+    def term(self):
         result = self.factor()
 
         while self.current_token.type in (MUL, DIV):
