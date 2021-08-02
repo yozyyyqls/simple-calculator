@@ -1,6 +1,7 @@
 # 标识符类型
 INTEGER, MUL, DIV, EOF = 'INTEGER', 'MUL', 'DIV', 'EOF'
 PLUS, MINUS = 'PLUS', 'MINUS'
+LPAREN, RPAREN = '(', ')'
 
 
 
@@ -64,6 +65,14 @@ class Lexer(object):
             if self.current_char == '-':
                 self.advance()
                 return Token(MINUS, '-')
+
+            if self.current_char == '(':
+                self.advance()
+                return Token(LPAREN, '(')
+
+            if self.current_char == ')':
+                self.advance()
+                return Token(RPAREN, ')')
 
             self.error()
 
@@ -144,8 +153,16 @@ class Interpreter(object):
 
     def factor(self):
         token = self.current_token
-        self.eat(INTEGER)
-        return token.value
+        if token.type == INTEGER:
+            self.eat(INTEGER)
+            return token.value
+        elif token.type == LPAREN:
+            self.eat(LPAREN)
+            result = self.expr()
+            if self.current_token.type == RPAREN:
+                self.eat(RPAREN)
+                return result
+        self.error()
 
 
     def parse(self):
