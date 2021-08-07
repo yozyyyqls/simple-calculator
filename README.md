@@ -40,3 +40,26 @@
    ```
 
 ## 原理分析
+
+1. 程序结构
+2. 语法分析
+   ```
+   expr : term ((PLUS | MINUS) term)*
+   term : factor ((MUL | DIV) factor)*
+   factor : INTEGER | LPAREN expr RPAREN | (MUL | DIV) factor
+   ```
+   注意：文法中的括号并不是终结符，只有LPAREN和RPAREN才表示为终结符中的括号
+
+    非终结符：
+    - expr 运算式
+    - term 项
+    - factor 因子
+
+    终结符：
+    - PLUS 加 +
+    - MINUS 减 -
+    - MUL 乘 *
+    - DIV 除 /
+    - LPAREN 左括号 (
+    - RPAREN 右括号 )
+3. 详细设计
